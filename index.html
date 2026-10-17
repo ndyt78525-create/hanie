@@ -1,0 +1,193 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>بازجویی هانیه 😂</title>
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  font-family: Tahoma, sans-serif;
+  background: #fff0f5;
+  color: #29212b;
+}
+
+.card {
+  width: 100%;
+  max-width: 430px;
+  background: white;
+  padding: 28px 20px;
+  border-radius: 25px;
+  text-align: center;
+  box-shadow: 0 10px 40px #c99bbd55;
+}
+
+h1 { color: #e84393; font-size: 25px; }
+#question { font-size: 22px; line-height: 1.9; margin: 25px 0; }
+
+.answers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  min-height: 65px;
+}
+
+button {
+  border: 0;
+  border-radius: 13px;
+  padding: 13px 19px;
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform .2s, font-size .2s;
+}
+
+.yes { background: #ff4f9a; color: white; }
+.no { background: #eeeeee; color: #333; }
+.option { background: #f4e8ff; color: #65339b; }
+button:active { transform: scale(.96); }
+
+#progress { color: #999; font-size: 13px; margin-top: 22px; }
+#result { display: none; }
+#result h2 { color: #e84393; line-height: 2; }
+#result p { line-height: 2.2; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div id="quiz">
+    <h1>😂 بازجویی رسمی هانیه 😂</h1>
+    <div id="question"></div>
+    <div class="answers" id="answers"></div>
+    <div id="progress"></div>
+  </div>
+
+  <div id="result">
+    <h1>📋 گزارش نهایی بازجویی</h1>
+    <h2>هانیه چاقالو بو دهنی 🤣🤣</h2>
+    <p>
+      طبق بررسی‌های کاملاً الکی و غیرعلمی ما،
+      هانیه به چاقالویی، بو دهانی و پاچه‌خواری متهم شد! 😂
+    </p>
+    <p>برای مشاهدهٔ نتیجه، روی ثبت نهایی بزن!</p>
+    <button class="yes" onclick="finish()">ثبت نهایی 😂</button>
+    <div id="finalInfo"></div>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "هانیه، آیا تو چاقالویی؟ 😂",
+    a: ["آره", "نه"],
+    trap: true
+  },
+  {
+    q: "هانیه، دهنت بو می‌ده؟ 🤢",
+    a: ["آرههههههههه", "آره"],
+    next: true
+  },
+  {
+    q: "هانیه، کی پولمو می‌دی؟ 💸",
+    a: ["۱ ماه", "۱ سال", "هزار سال بعد"]
+  },
+  {
+    q: "هانیه، به منصور از ۱ تا ۱۰ نمره بده! 😎",
+    a: ["۱", "۰", "۱۰", "اصلاً مهم نیست"]
+  },
+  {
+    q: "چرا پاچه‌خوار مامانی؟ 😂",
+    a: ["کار من اینه", "دوست دارم", "پاچه‌خوار نیستم"],
+    last: true
+  }
+];
+
+let index = 0;
+let yesScale = 1;
+let answersGiven = [];
+
+const questionEl = document.getElementById("question");
+const answersEl = document.getElementById("answers");
+const progressEl = document.getElementById("progress");
+
+function render() {
+  const item = questions[index];
+  questionEl.textContent = item.q;
+  answersEl.innerHTML = "";
+  yesScale = 1;
+
+  item.a.forEach((answer, i) => {
+    const btn = document.createElement("button");
+    btn.textContent = answer;
+    btn.className = item.trap
+      ? (i === 0 ? "yes" : "no")
+      : "option";
+
+    btn.onclick = () => {
+      if (item.trap && answer === "نه") {
+        yesScale += 0.8;
+        const yesButton = answersEl.querySelector(".yes");
+        yesButton.style.fontSize = (17 * yesScale) + "px";
+        yesButton.style.padding =
+          (13 * yesScale) + "px " + (19 * yesScale) + "px";
+        yesButton.style.zIndex = "2";
+        return;
+      }
+
+      answersGiven.push({
+        question: item.q,
+        answer: answer
+      });
+
+      if (item.last) {
+        questionEl.textContent = "ولی هستییییی 😂😂";
+        answersEl.innerHTML = "";
+        const nextBtn = document.createElement("button");
+        nextBtn.className = "yes";
+        nextBtn.textContent = "ثبت 😂";
+        nextBtn.onclick = showResult;
+        answersEl.appendChild(nextBtn);
+        progressEl.textContent = "آخرین مرحله!";
+        return;
+      }
+
+      index++;
+      render();
+    };
+
+    answersEl.appendChild(btn);
+  });
+
+  progressEl.textContent =
+    "سؤال " + (index + 1) + " از " + questions.length;
+}
+
+function showResult() {
+  document.getElementById("quiz").style.display = "none";
+  document.getElementById("result").style.display = "block";
+}
+
+function finish() {
+  document.getElementById("finalInfo").innerHTML =
+    "<p><b>اطلاعات ثبت شد! 🤣</b></p>" +
+    "<p>نام متهم: هانیه چاقالو بو دهنی 😂</p>" +
+    "<p>وضعیت پرونده: محکوم به خنده!</p>" +
+    "<p>امضای بازپرس: منصور 😎</p>";
+}
+
+render();
+</script>
+</body>
+</html>
